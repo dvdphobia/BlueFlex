@@ -3,7 +3,7 @@ package com.dvdphobia.blueflex;
 import com.dvdphobia.blueflex.service.ServiceManager;
 import com.dvdphobia.blueflex.utils.CLI;
 
-public class Demo {
+public class Main {
     public static void main(String[] args) {
         ServiceManager manager = new ServiceManager();
         manager.startAll();
