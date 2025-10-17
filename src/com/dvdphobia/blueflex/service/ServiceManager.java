@@ -1,29 +1,56 @@
 package com.dvdphobia.blueflex.service;
 
 import com.dvdphobia.blueflex.utils.AppLogger;
-import com.dvdphobia.blueflex.ui.MainUI;
+import com.dvdphobia.blueflex.utils.Configuration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ServiceManager {
     private final AppLogger log = new AppLogger("ServiceManager");
     private final List<AppService> services = new ArrayList<>();
+    private static final String DEFAULT_CONFIG_PATH = "/Users/ashiba/IdeaProjects/demo/BlueFlex/src/com/dvdphobia/blueflex/worker/services.json";
 
 
-    public ServiceManager() {
-        // Register all services
-        services.add(new MainUI());
-    }
 
     // === Control Methods ===
 
     public void startAll() {
-        log.info("Starting all services...");
-        for (AppService service : services) {
-            startService(service);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<Configuration> configs = mapper.readValue(
+                    new File(DEFAULT_CONFIG_PATH),
+                    new TypeReference<List<Configuration>>() {}
+            );
+
+            for (Configuration cfg : configs) {
+                if (!cfg.enabled) continue;
+
+                try {
+                    Class<?> cls = Class.forName(cfg.className);
+                    Object instance = cls.getDeclaredConstructor().newInstance();
+
+                    if (instance instanceof AppService service) {
+                        services.add(service);
+                        if (cfg.config != null && service instanceof ConfigurableAppService configurable) {
+                            configurable.configure(cfg.config);
+                        }
+                        service.start();
+                        log.info("Started: " + service.getServiceName());
+                    } else {
+                        log.warn("Not an AppService: " + cfg.className);
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to start " + cfg.className + ": " + e.getMessage());
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to load services.json: " + e.getMessage());
         }
-        log.info("All services started.");
     }
 
     public void stopAll() {
