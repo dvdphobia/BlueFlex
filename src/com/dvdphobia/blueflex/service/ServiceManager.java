@@ -12,7 +12,7 @@ import java.util.List;
 public class ServiceManager {
     private final AppLogger log = new AppLogger("ServiceManager");
     private final List<AppService> services = new ArrayList<>();
-    private static final String DEFAULT_CONFIG_PATH = "/Users/ashiba/IdeaProjects/demo/BlueFlex/src/com/dvdphobia/blueflex/worker/services.json";
+    private static final String DEFAULT_CONFIG_PATH = "src/com/dvdphobia/blueflex/worker/services.json";
 
 
 

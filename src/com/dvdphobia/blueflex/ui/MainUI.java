@@ -1,49 +1,43 @@
 package com.dvdphobia.blueflex.ui;
 
+import com.dvdphobia.blueflex.service.AppService;
+import com.dvdphobia.blueflex.utils.AppLogger;
+
 import javax.swing.*;
+import java.util.Map;
 
-import java.awt.*;
-import java.util.concurrent.Flow;
+public class MainUI extends AppService {
+    private final AppLogger log = new AppLogger("MainUI");
+    private JFrame frame;
 
-public class MainUI extends JFrame {
-    public JFrame mainFrame;
-    public JButton btn1, btn2, btn3;
-    public JPanel panel1, panel2, panel3;
-    private ImageIcon icon;
+    private int width = 600;
+    private int height = 400;
+    private String title = "BlueFlex UI";
 
     public MainUI() {
-        mainFrame = new JFrame("My Application");
-        mainFrame.setSize(500, 600);
-        mainFrame.setLayout(new GridLayout(3, 1)); // 3 rows, 1 column
-        icon = new ImageIcon("/Users/ashiba/Documents/ahphou.jpg");
+        super("BlueFlex UI", "UI", "0.0.1", "Main User Interface");
+    }
 
-        panel1 = new JPanel();
-        panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+    public void configure(Map<String, Object> config) {
+        if (config.get("width") != null) width = ((Number) config.get("width")).intValue();
+        if (config.get("height") != null) height = ((Number) config.get("height")).intValue();
+        if (config.get("title") != null) title = config.get("title").toString();
+    }
 
-        panel2 = new JPanel();
-        panel2.setLayout(new FlowLayout(FlowLayout.CENTER));
+    @Override
+    public void start() {
+        super.start();
+        frame = new JFrame(title);
+        frame.setSize(width, height);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        log.info("MainUI started with size " + width + "x" + height);
+    }
 
-        panel3 = new JPanel();
-        panel3.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-
-        btn1 = new JButton("LEFT", icon);
-        btn2 = new JButton("CENTER");
-        btn3 = new JButton("RIGHT");
-
-
-        panel1.add(btn1);
-        panel2.add(btn2);
-        panel3.add(btn3);
-        // Add buttons to frame
-        mainFrame.add(panel1);
-        mainFrame.add(panel2);
-        mainFrame.add(panel3);
-
-
-
-        mainFrame.setVisible(true);
-
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    @Override
+    public void stop() {
+        super.stop();
+        if (frame != null) frame.dispose();
+        log.info("MainUI stopped");
     }
 }

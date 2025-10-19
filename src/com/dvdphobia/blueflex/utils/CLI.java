@@ -110,7 +110,7 @@ public class CLI extends AppService {
         List<String> history = new ArrayList<>();
 
         while (running) {
-            System.out.print("AI CASIO> ");
+            System.out.print("> ");
             String input;
 
             if (console != null) {
