@@ -12,8 +12,8 @@ import java.util.List;
 public class ServiceManager {
     private final AppLogger log = new AppLogger("ServiceManager");
     private final List<AppService> services = new ArrayList<>();
-    //private static final String DEFAULT_CONFIG_PATH = "src/com/dvdphobia/blueflex/worker/services.json";
-    private static final String DEFAULT_CONFIG_PATH = System.getProperty("blueflex.config", "config/services.json");
+    private static final String DEFAULT_CONFIG_PATH = "config/services.json";
+
 
 
     // === Control Methods ===

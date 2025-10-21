@@ -65,6 +65,8 @@ public class AppService {
     public String getServiceName() {
         return ServiceName;
     }
+    public String getServiceVersion() {return ServiceVersion;}
+    public String getServiceDescription() {return ServiceDescription;}
 
     public LocalDateTime getServiceStartTime() {
         return ServiceStartTime;

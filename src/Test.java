@@ -1,92 +1,63 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.BufferedReader;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 public class Test {
-    public static void main(String[] args) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+    private final JLabel positionLabel;
 
-        // Test object
-        TestUser user = new TestUser("John", 30);
+    public Test(JFrame frame) {
+        positionLabel = new JLabel("X: 0, Y: 0");
+        positionLabel.setForeground(Color.WHITE);
+        positionLabel.setOpaque(true);
+        positionLabel.setBackground(new Color(0, 0, 0, 120)); // semi-transparent black
+        positionLabel.setFont(new Font("Monospaced", Font.BOLD, 12));
 
-        // Convert to JSON
-        String json = mapper.writeValueAsString(user);
-        System.out.println("JSON: " + json);
+        // Use absolute positioning
+        frame.setLayout(null);
+        frame.add(positionLabel);
+        positionLabel.setBounds(frame.getWidth() - 100, 10, 90, 20);
 
-        // Convert back from JSON
-        TestUser parsedUser = mapper.readValue(json, TestUser.class);
-        System.out.println("Name: " + parsedUser.getName());
-        user.readFromFileJson("/main.json");
-        read("/main.json ");
-    }
-
-    public static void read(String fileName)
-    {
-        try {
-            BufferedReader br = new BufferedReader(new java.io.FileReader(fileName));
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
+        // Adjust label position on resize
+        frame.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                positionLabel.setBounds(frame.getWidth() - 100, 10, 90, 20);
             }
-            br.close();
-        } catch (Exception e) {
-            System.err.println("Error reading file: " + e.getMessage());
-        }
-    }
-}
+        });
 
-
-class TestUser {
-    private String name;
-    private int age;
-    private ObjectMapper mapper = new ObjectMapper();
-
-    // Default constructor required
-    public TestUser() {}
-
-    public TestUser(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    public void readFromFileJson(String fileName) {
-        // Input validation
-        if (fileName == null || fileName.trim().isEmpty()) {
-            System.err.println("File name cannot be null or empty");
-            return;
-        }
-
-        File file = new File(fileName);
-        if (!file.exists() || !file.isFile()) {
-            System.err.println("File does not exist or is not a regular file: " + fileName);
-            return;
-        }
-
-        try {
-            TestUser temp = mapper.readValue(file, TestUser.class);
-
-            // Validate the deserialized object
-            if (temp != null) {
-                this.name = temp.getName();
-                this.age = temp.getAge();
-                System.out.println("Name: " + this.name + " Age: " + this.age);
-            } else {
-                System.err.println("Deserialized object is null");
+        // Track mouse movement anywhere inside the frame
+        frame.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                updatePosition(frame, e.getX(), e.getY());
             }
 
-        } catch (JsonProcessingException e) {
-            System.err.println("Error parsing JSON content: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Error reading file '" + fileName + "': " + e.getMessage());
-        }
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updatePosition(frame, e.getX(), e.getY());
+            }
+        });
     }
 
-    // Getters and setters required
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public int getAge() { return age; }
-    public void setAge(int age) { this.age = age; }
+    private void updatePosition(JFrame frame, int x, int y) {
+        positionLabel.setText("X: " + x + ", Y: " + y);
+        // Keep it at top-right
+        positionLabel.setBounds(frame.getWidth() - 100, 10, 90, 20);
+    }
+
+    // Static helper to easily attach to any frame
+    public static void attach(JFrame frame) {
+        new Test(frame);
+    }
+
+    // Test demo
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("UI Debug Tool");
+        frame.setSize(600, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        Test.attach(frame);
+    }
 }

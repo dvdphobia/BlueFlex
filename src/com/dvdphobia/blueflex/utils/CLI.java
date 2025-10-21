@@ -72,8 +72,16 @@ public class CLI extends AppService {
             manager.stopServiceByType(args[0]);
         });
         register("list", "List all running services", "ls", args -> {
-//            manager.listServices();
-            log.info("Not yet implemented.");
+            log.info("\n=== Running Services ===");
+            for (AppService service : manager.getServices()) {
+                log.info(String.format("  [%s] %s v%s - %s",
+                        service.isRunning() ? "✓" : "✗",
+                        service.getServiceName(),
+                        service.getServiceVersion(),
+                        service.getServiceDescription()
+                ));
+            }
+            log.info("Total: " + manager.getServices().size());
         });
     }
 
