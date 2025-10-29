@@ -1,6 +1,6 @@
 [
   {
-    "className": "com.dvdphobia.blueflex.ui.MainUI",
+    "className": "com.blueflex.ui.MainUI",
     "enabled": true,
     "config": {}
   }
